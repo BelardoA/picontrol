@@ -35,7 +35,7 @@ password: raspberry
 (The NFC reader has set of switches that must be configured for SPI communication)
 
 ## Pi Control Uninstall
-1. Connect to your raspberry pi via SSH
+1. Connect to your raspberry pi via SSH or boot up your raspberry pi and press F4 on the keyboard to exit to the terminal
 ```bash
 ssh pi@<your raspberry pis IP address>
 password: raspberry
