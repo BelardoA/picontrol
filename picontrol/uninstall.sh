@@ -47,6 +47,12 @@ if [ "$REPLY" = "y" ] || [ "$REPLY" = "Y" ]; then
     echo "======================================"
     echo "Uninstallation Complete!!!"
     echo "======================================"
+    echo "You will need to remove the PiControl Hardware from your Raspberry Pi while it is powered off."
+    read -rp "You must shutdown for changes to take effect, shutdown now? (y/n):" REPLY
+    if [ "$REPLY" = "y" ] || [ "$REPLY" = "Y" ]; then
+        echo "Shutting Down in 5 seconds..."
+        sleep 5 && sudo shutdown -h 0
+    fi
 fi
 
 # End
