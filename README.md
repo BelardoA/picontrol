@@ -46,4 +46,5 @@ cd picontrol
 sudo sh ./uninstall.sh
 ```
 3. Follow the prompts
-4. Once the raspberry pi shuts down, you may remove the Pi Control hardware and restore your Pi to its original state
+4. Once the raspberry pi shuts down, you may remove the Pi Control hardware and restore your raspberry pi to its original state
+5. Power on your raspberry pi by reconnecting the power cable
