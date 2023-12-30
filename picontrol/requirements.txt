@@ -1,0 +1,5 @@
+psutil
+flask
+flask-api
+flask-httpauth
+PyJWT
