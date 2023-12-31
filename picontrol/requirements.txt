@@ -1,5 +1,5 @@
-psutil
-flask
-flask-api==2.*
-flask-httpauth
+psutil==5.2.2
+flask==0.12.2
+flask-api==0.7.1
+flask-httpauth==3.2.3
 PyJWT
