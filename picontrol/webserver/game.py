@@ -4,8 +4,7 @@
 import sys, os, json
 from xml.dom import minidom
 
-# sys.path.append('/home/pi/scripts/picontrol')
-print(os.getcwd())
+sys.path.append('/home/pi/scripts/picontrol')
 
 import picontrol_processes as procs
 
