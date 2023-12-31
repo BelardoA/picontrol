@@ -19,10 +19,16 @@ read -rp "Would you like to continue with the installation? (y/n): " REPLY
 
 if [ "$REPLY" = "y" ] || [ "$REPLY" = "Y" ]; then
     echo "**************************************"
+    echo "Installing Pre-Requisites"
+    echo "**************************************"
+    apt-get install -y python-dev python-pip git
+    python -m ensurepip --upgrade
+    python -m pip install --upgrade pip setuptools wheel
+    
+    echo "**************************************"
     echo "Installing NFC Libraries and Webserver"
     echo "**************************************"
 
-    apt-get install -y python-dev python-pip git
     git clone https://github.com/adafruit/Adafruit_Python_PN532.git
     cd Adafruit_Python_PN532
     python setup.py install
