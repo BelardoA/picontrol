@@ -1,38 +1,41 @@
 #!/usr/bin/python 
 #config.py
 
-import ConfigParser
+import sys, ConfigParser
 
+basePath = '/home/pi/scripts/picontrol/configs'
+updatePath = '/home/pi/scripts/picontrol_update/picontrol/configs'
 
-class Config:
-    config_file = 'config.conf'
-    base_path = '/home/pi/scripts/picontrol/configs'
-    update_path = '/home/pi/scripts/picontrol_update/picontrol/configs'
-
-    def loadConfig(self):
+class Config():
+    @staticmethod
+    def loadConfig():
         config = ConfigParser.RawConfigParser()
-        configFilePath = self.base_path + self.config_file
+        configFilePath = basePath + '/config.conf'
         config.read(configFilePath)
         return config
     
-    def saveConfig(self, config):
-        with open(self.base_path + self.config_file, 'w') as configFile:
+    @staticmethod
+    def saveConfig(config):
+        with open(basePath + '/config.conf', 'w') as configFile:
             config.write(configFile)
         return True
 
-    def loadVersion(self):
+    @staticmethod
+    def loadVersion():
         config = ConfigParser.RawConfigParser()
-        configFilePath = self.base_path + '/picontrol.version'
+        configFilePath = basePath + '/picontrol.version'
         config.read(configFilePath)
         return config
     
-    def saveVersion(self, config):
-        with open(self.base_path + '/picontrol.version', 'w') as configFile:
+    @staticmethod
+    def saveVersion(config):
+        with open(basePath + '/picontrol.version', 'w') as configFile:
             config.write(configFile)
         return True
 
-    def loadUpdateVersion(self):
+    @staticmethod
+    def loadUpdateVersion():
         config = ConfigParser.RawConfigParser()
-        configFilePath = self.update_path + '/picontrol.version'
+        configFilePath = updatePath + '/picontrol.version'
         config.read(configFilePath)
         return config
