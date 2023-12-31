@@ -42,7 +42,7 @@ if [ "$REPLY" = "y" ] || [ "$REPLY" = "Y" ]; then
     echo "Restoring RetroPie Startup Commands"
     echo "**************************************"
     echo "Restoring RetroPie Startup Commands"
-    cp "$CONFIGS/old-autostart.sh" "$CONFIGS/all/autostart.sh"
+    cp "$CONFIGS/old-autostart.sh" "$CONFIGS/autostart.sh"
     echo "Restoring RetroPie Runcommand Commands"
     cp "$CONFIGS/old-runcommand-onend.sh" "$CONFIGS/runcommand-onend.sh"
     cp "$CONFIGS/old-runcommand-onstart.sh" "$CONFIGS/runcommand-onstart.sh"
