@@ -24,7 +24,9 @@ if [ "$REPLY" = "y" ] || [ "$REPLY" = "Y" ]; then
 
     apt-get install -y python-dev python-pip git
     git clone https://github.com/adafruit/Adafruit_Python_PN532.git
-    python ./Adafruit_Python_PN532/setup.py install
+    cd Adafruit_Python_PN532
+    python setup.py install
+    cd ..
     rm -R Adafruit_Python_PN532
 
     echo "**************************************"
