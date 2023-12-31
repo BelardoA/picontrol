@@ -17,7 +17,7 @@ if [ "$REPLY" = "y" ] || [ "$REPLY" = "Y" ]; then
     echo "Removing NFC Libraries"
     echo "**************************************"
 
-    pip uninstall Adafruit-Python Adafruit-GPIO -y
+    pip uninstall Adafruit-PN532 Adafruit-GPIO -y
 
     echo "**************************************"
     echo "Uninstalling picontrol Requirements"
