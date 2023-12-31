@@ -2,6 +2,8 @@
 
 # RetroPi Control Uninstall
 SCRIPTS='/home/pi/scripts'
+# RetroPie configs
+CONFIGS='/opt/retropie/configs/all'
 
 # Start uninstall
 echo "**************************************"
@@ -15,7 +17,7 @@ if [ "$REPLY" = "y" ] || [ "$REPLY" = "Y" ]; then
     echo "Removing NFC Libraries"
     echo "**************************************"
 
-    pip uninstall Adafruit_Python_PN532 -y
+    pip uninstall Adafruit-Python Adafruit-GPIO -y
 
     echo "**************************************"
     echo "Uninstalling picontrol Requirements"
@@ -39,10 +41,11 @@ if [ "$REPLY" = "y" ] || [ "$REPLY" = "Y" ]; then
     echo "**************************************"
     echo "Restoring RetroPie Startup Commands"
     echo "**************************************"
-
-    cp "/opt/retropie/configs/all/old-autostart.sh" "/opt/retropie/configs/all/autostart.sh"
-    cp "/opt/retropie/configs/all/old-runcommand-onend.sh" "/opt/retropie/configs/all/runcommand-onend.sh"
-    cp "/opt/retropie/configs/all/old-runcommand-onstart.sh" "/opt/retropie/configs/all/runcommand-onstart.sh"
+    echo "Restoring RetroPie Startup Commands"
+    cp "$CONFIGS/old-autostart.sh" "$CONFIGS/all/autostart.sh"
+    echo "Restoring RetroPie Runcommand Commands"
+    cp "$CONFIGS/old-runcommand-onend.sh" "$CONFIGS/runcommand-onend.sh"
+    cp "$CONFIGS/old-runcommand-onstart.sh" "$CONFIGS/runcommand-onstart.sh"
 
     echo "======================================"
     echo "Uninstallation Complete!!!"
