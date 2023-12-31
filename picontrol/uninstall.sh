@@ -27,7 +27,7 @@ if [ "$REPLY" = "y" ] || [ "$REPLY" = "Y" ]; then
     echo "**************************************"
     echo "Removing PiControl Script Files"
     echo "**************************************"
-    rm -rf "$SCRIPTS/picontrol"
+    rm -rf "$SCRIPTS"
 
     echo "**************************************"
     echo "Reverting Serial Interface Settings"
