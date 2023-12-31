@@ -1,7 +1,4 @@
-try:
-    import sys, os, time, json, subprocess, ConfigParser
-except (ImportError, ModuleNotFoundError):
-    import configparser as ConfigParser
+import sys, os, time, json, subprocess, ConfigParser
 import RPi.GPIO as GPIO
 import picontrol_processes as procs
 import picontrol_nfc as nfc

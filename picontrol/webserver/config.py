@@ -1,10 +1,7 @@
 #!/usr/bin/python 
 #config.py
 
-try:
-    import sys, ConfigParser
-except (ImportError, ModuleNotFoundError):
-    import configparser as ConfigParser
+import sys, ConfigParser
 
 basePath = '/home/pi/scripts/picontrol/configs'
 updatePath = '/home/pi/scripts/picontrol_update/picontrol/configs'

@@ -1,7 +1,4 @@
-try:
-    import sys, psutil, os, re, subprocess, time, ConfigParser, socket, threading
-except (ImportError, ModuleNotFoundError):
-    import configparser as ConfigParser
+import sys, psutil, os, re, subprocess, time, ConfigParser, socket, threading
 
 ## killTasks
 def killTasks(procnames):
