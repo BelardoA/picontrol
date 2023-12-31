@@ -16,8 +16,6 @@ ndg-httpsclient==0.3.2
 pyopenssl==0.13.1
 pyasn1==0.1.7
 pycrypto==2.6.1
-pygobject==3.14.0
-python-apt==0.9.3.12
 pyudev==0.16.1
 requests==2.4.3
 six==1.8.0
