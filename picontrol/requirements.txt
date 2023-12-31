@@ -1,5 +1,5 @@
 psutil
 flask
-flask-api
+flask-api==2.*
 flask-httpauth
 PyJWT
