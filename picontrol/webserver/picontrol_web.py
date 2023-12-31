@@ -1,8 +1,9 @@
 #!/usr/bin/python 
 #app.py
 import os, psutil, json, logging
-from flask import Flask, render_template, jsonify, request, session, redirect, make_response
+from flask import Flask, render_template, jsonify, request, session, redirect
 from flask_httpauth import HTTPBasicAuth
+from flask_api import status
 
 from user import User
 from config import Config
@@ -56,7 +57,7 @@ def get_auth_token():
             if sessionUser.username != '':
                 token = sessionUser.generate_auth_token(app.config['SECRET_KEY'])
                 return jsonify({'access_token': token.decode('ascii')})
-    return "", make_response(jsonify({'error': 'Unauthorized access'}), 401)
+    return "", status.HTTP_401_UNAUTHORIZED
 
 @app.route('/api/test')
 @auth.login_required
