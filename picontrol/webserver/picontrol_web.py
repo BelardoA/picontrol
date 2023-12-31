@@ -56,8 +56,20 @@ def get_auth_token():
             sessionUser.username = session['username']
             if sessionUser.username != '':
                 token = sessionUser.generate_auth_token(app.config['SECRET_KEY'])
-                return jsonify({'access_token': token.decode('ascii')})
-    return "", status.HTTP_401_UNAUTHORIZED
+                response_data = {'access_token': token.decode('ascii')}
+                return json.dumps(response_data), 200, {'Content-Type': 'application/json'}
+    return "", 401
+
+# @app.route('/token', methods=['POST'])
+# def get_auth_token():
+#     if verify_password(request.form['username'], request.form['password']) == True:
+#         if 'username' in session:
+#             sessionUser = User()
+#             sessionUser.username = session['username']
+#             if sessionUser.username != '':
+#                 token = sessionUser.generate_auth_token(app.config['SECRET_KEY'])
+#                 return jsonify({'access_token': token.decode('ascii')})
+#     return "", status.HTTP_401_UNAUTHORIZED
 
 @app.route('/api/test')
 @auth.login_required
