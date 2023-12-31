@@ -85,7 +85,7 @@ class Settings():
             currentVersion = Settings.getVersion()
             
             os.system('mkdir ' + updateDir)
-            os.system('wget --no-check-certificate --content-disposition https://github.com/jetechteam/picontrol/raw/master/picontrol.tgz')
+            os.system('wget --no-check-certificate --content-disposition https://github.com/BelardoA/picontrol/raw/master/picontrol.tgz')
             os.system('tar -xzf picontrol.tgz picontrol')
             os.system('mv ./picontrol ' + updateDir + '/picontrol')
 
@@ -108,7 +108,7 @@ class Settings():
         response = {"update":False}
         try:                        
             os.system('mkdir ' + updateDir)
-            os.system('wget --no-check-certificate --content-disposition https://github.com/jetechteam/picontrol/raw/master/picontrol.tgz')
+            os.system('wget --no-check-certificate --content-disposition https://github.com/BelardoA/picontrol/raw/master/picontrol.tgz')
             os.system('tar -xzf picontrol.tgz picontrol')
             os.system('mv ./picontrol ' + updateDir + '/picontrol')
             os.system('cp ' + baseDir + '/configs/config.conf ' + updateDir + '/picontrol/configs/config.conf')
