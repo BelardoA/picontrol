@@ -26,7 +26,7 @@ if [ "$REPLY" = "y" ] || [ "$REPLY" = "Y" ]; then
     echo "**************************************"
     echo "Installing Pre-Requisites"
     echo "**************************************"
-    apt-get install -y python-dev python-pip git
+    apt-get install -y python-dev python-pip git libssl-dev
     python -m pip install --upgrade pip setuptools wheel
     
     echo "**************************************"
