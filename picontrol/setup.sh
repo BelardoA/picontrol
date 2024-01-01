@@ -19,10 +19,14 @@ read -rp "Would you like to continue with the installation? (y/n): " REPLY
 
 if [ "$REPLY" = "y" ] || [ "$REPLY" = "Y" ]; then
     echo "**************************************"
+    echo "Updating System"
+    echo "**************************************"
+    apt-get update -y
+
+    echo "**************************************"
     echo "Installing Pre-Requisites"
     echo "**************************************"
     apt-get install -y python-dev python-pip git
-    python -m ensurepip --upgrade
     python -m pip install --upgrade pip setuptools wheel
     
     echo "**************************************"
@@ -41,7 +45,6 @@ if [ "$REPLY" = "y" ] || [ "$REPLY" = "Y" ]; then
 
     pip install -r requirements.txt
 
-    # Copy files
     echo "**************************************"
     echo "Installing Script Files"
     echo "**************************************"
