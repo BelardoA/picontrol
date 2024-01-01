@@ -73,6 +73,18 @@ if [ "$REPLY" = "y" ] || [ "$REPLY" = "Y" ]; then
     echo 'python /home/pi/scripts/picontrol/picontrol.py&' >> "/opt/retropie/configs/all/autostart.sh"
     echo 'emulationstation' >> "/opt/retropie/configs/all/autostart.sh"
 
+    if [ -e "/opt/retropie/configs/all/old-runcommand-onstart.sh" ]; then
+      cp "/opt/retropie/configs/all/old-runcommand-onstart.sh" "/opt/retropie/configs/all/runcommand-onstart.sh"
+    else
+      touch "/opt/retropie/configs/all/runcommand-onstart.sh"
+    fi
+
+    if [ -e "/opt/retropie/configs/all/old-runcommand-onend.sh" ]; then
+      cp "/opt/retropie/configs/all/old-runcommand-onend.sh" "/opt/retropie/configs/all/runcommand-onend.sh"
+    else
+      touch "/opt/retropie/configs/all/runcommand-onend.sh"
+    fi
+
     mv "/opt/retropie/configs/all/runcommand-onend.sh" "/opt/retropie/configs/all/old-runcommand-onend.sh"
     echo 'python /home/pi/scripts/picontrol/picontrol_gameend.py&' > "/opt/retropie/configs/all/runcommand-onend.sh"
 
