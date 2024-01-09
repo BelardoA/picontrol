@@ -21,7 +21,7 @@ if [ "$REPLY" = "y" ] || [ "$REPLY" = "Y" ]; then
     echo "**************************************"
     echo "Updating System"
     echo "**************************************"
-    apt-get update -y
+    apt-get update -y && apt-get upgrade -y
 
     echo "**************************************"
     echo "Installing Pre-Requisites"
@@ -44,6 +44,22 @@ if [ "$REPLY" = "y" ] || [ "$REPLY" = "Y" ]; then
     echo "**************************************"
 
     pip install -r requirements.txt
+
+    echo "**************************************"
+    echo "Verifying Dependencies Were Installed"
+    echo "**************************************"
+
+    # shellcheck disable=SC2013
+    for i in $(cat requirements.txt); do
+      i=${i%==*}  # Remove version numbers
+        if python -c "import $i" &> /dev/null; then
+            echo "$i is installed"
+        else
+            echo "$i is not installed"
+            echo "Retrying install for $i..."
+            pip install "$i"
+        fi
+    done
 
     echo "**************************************"
     echo "Installing Script Files"
