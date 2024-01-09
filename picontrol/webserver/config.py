@@ -1,5 +1,5 @@
 #!/usr/bin/python 
-#config.py
+# config.py
 
 import ConfigParser
 
@@ -17,6 +17,11 @@ class Config:
         self.config_parser = ConfigParser.RawConfigParser()
         self.config = self.load_config()
         self.version = self.load_version()
+        self.update_version = self.load_update_version()
+        self.theme = self.config.get("user", "theme")
+        self.user = self.get_user()
+        self.fan_settings = self.get_fan_settings()
+        self.button_settings = self.get_button_settings()
 
     def load_config(self):
         """
@@ -51,3 +56,28 @@ class Config:
         Load the update version file from disk
         """
         return self.config_parser.read(self.update_path + self.version_file)
+
+    def get_user(self):
+        """
+        Get the user from the config file
+        """
+        return {
+            "username": self.config.get("user", "username"),
+            "password": self.config.get("user", "password"),
+        }
+
+    def get_fan_settings(self):
+        """
+        Get the fan settings from the config file
+        """
+        return {
+            "thresholdOn": self.config.get("fan", "thresholdOn"),
+            "thresholdOff": self.config.get("fan", "thresholdOff"),
+            "interval": self.config.get("fan", "interval"),
+        }
+
+    def get_button_settings(self):
+        """
+        Get the button settings from the config file
+        """
+        return self.config.get("button", "option")
