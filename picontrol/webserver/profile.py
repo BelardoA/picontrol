@@ -1,51 +1,62 @@
 #!/usr/bin/python 
-#profile.py
+# profile.py
 
 from config import Config
 
-class Profile():
-    @staticmethod
-    def setUser(user):
-        try:
-            config = Config.loadConfig()
-            config.set("user", "username", user['username'])   
-            config.set("user", "password", user['password'])
 
-            Config.saveConfig(config)
+class Profile:
+    def __init__(self):
+        self.config = Config()
+
+    def set_user(self, user: dict) -> bool:
+        """
+        Update and save user in config file
+
+        :param dict user: The user to save in config file
+        :return: True if the user was saved, False otherwise
+        :rtype: bool
+        """
+        try:
+            config = self.config
+            config.user['username'] = user['username']
+            config.user["password"] = user['password']
+            config.save_config(config.config)
             return True
-        except:
+        except Exception as ex:
+            print('Error saving user: ' + str(ex))
             return False
 
-    @staticmethod
-    def getUser():
-        try:
-            config = Config.loadConfig()
-            username = config.get("user", "username")
-            password = config.get("user", "password")   
+    def get_user(self) -> dict:
+        """
+        Function to get user info from config file
 
-            return {"username":username, "password":password}
-        except:
-            return {"username":'', "password":''}
+        :returns: Dictionary containing username and password
+        :rtype: dict
+        """
+        try:
+            return self.config.user
+        except Exception as ex:
+            print('Error getting user: ' + str(ex))
+            return {"username": '', "password": ''}
 
     @staticmethod
-    def setTheme(theme):
+    def set_theme(theme):
         try:
-            config = Config.loadConfig()
-            config.set("user", "theme", theme["theme"])
+            config = Config().config
+            config.theme = theme["theme"]
             
-            Config.saveConfig(config)
+            config.save_config(config)
             return True
-        except:
+        except Exception as ex:
+            print('Error saving theme: ' + str(ex))
             return False
 
     @staticmethod
-    def getTheme():
+    def get_theme():
         try:
-            config = Config.loadConfig()
-            theme = config.get("user", "theme")
-
-            return {"theme":theme}
-        except:
-            return {"theme":'green'}
+            return {"theme": Config().theme}
+        except Exception as ex:
+            print('Error getting theme: ' + str(ex) + '. Using default theme.')
+            return {"theme": 'green'}
 
             
