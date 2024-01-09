@@ -11,7 +11,7 @@ class Settings:
         self.base_dir = '/home/pi/scripts/picontrol'
         self.config = Config()
 
-    def set_fan_settings(self, fan_settings: dict) -> bool:
+    def set_fan_settings(self, fan_settings):
         """
         Set the fan settings in the config file
 
@@ -31,7 +31,7 @@ class Settings:
             print('Error saving fan settings: ' + str(ex))
             return False
 
-    def get_fan_settings(self) -> dict:
+    def get_fan_settings(self):
         """
         Function to get fan settings from config file
 
@@ -48,7 +48,7 @@ class Settings:
                 "interval": 0,
             }
 
-    def set_button_settings(self, option: dict) -> bool:
+    def set_button_settings(self, option):
         """
         Function to update and save button settings in config file
 
@@ -64,7 +64,7 @@ class Settings:
             print('Error saving button settings: ' + str(ex))
             return False
 
-    def get_button_settings(self) -> dict:
+    def get_button_settings(self):
         """
         Function to get button settings from config file
 
@@ -77,7 +77,7 @@ class Settings:
             print("Error getting button settings from config: " + str(ex))
             return {"option": 0}
 
-    def get_version(self) -> dict:
+    def get_version(self):
         """
         Function to get version number and date from config file
 
@@ -96,7 +96,7 @@ class Settings:
                 'date': ''
             }
 
-    def get_update_version(self) -> dict:
+    def get_update_version(self):
         """
         Function to get update version number and date from update path
 
@@ -116,7 +116,7 @@ class Settings:
                 'date': ''
             }
 
-    def check_updates(self) -> dict:
+    def check_updates(self):
         """
         Function to check for updates
 
@@ -147,14 +147,14 @@ class Settings:
 
         return response
 
-    def update_version(self) -> dict:
+    def update_version(self):
         """
         Function to check the version of the update and update the system
 
         :returns: Dictionary containing update status
         :rtype: dict
         """
-        response = {"update":False}
+        response = {"update": False}
         try:
             os.system('mkdir ' + self.update_dir)
             os.system('wget --no-check-certificate --content-disposition https://github.com/BelardoA/picontrol/raw/master/picontrol.tgz')
