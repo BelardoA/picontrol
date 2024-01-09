@@ -23,4 +23,3 @@ spidev==3.2
 urllib3==1.9.1
 wheel==0.24.0
 wsgiref==0.1.2
-rich
