@@ -32,9 +32,9 @@ def verify_password(token, password):
         session['username'] = sessionUser.username
         return True
     # authenticate with username/password
-    config = Config.loadConfig()        
-    appUsername = config.get("user","username")
-    appPassword = config.get("user","password")
+    config = Config().user
+    appUsername = config['username']
+    appPassword = config['password']
     if token == appUsername and password == appPassword:
         sessionUser = User()
         sessionUser.username = token
@@ -82,92 +82,99 @@ def getPiInfo():
     global fan
 
     res = os.popen('vcgencmd measure_temp').readline()
-    temp1 = float(res.replace("temp=","").replace("'C\n",""))
+    temp1 = float(res.replace("temp=", "").replace("'C\n" ,""))
     temp2 = float(temp1 * 1.8) + 32.0
     temp1 = "{0:.2f}".format(temp1)
     temp2 = "{0:.2f}".format(temp2)
 
-    thresholdOff = 50
-    thresholdOn = 60
+    threshold_off = 50
+    threshold_on = 60
 
     try:
-        fanConfig = Config.loadConfig()
-        thresholdOff = float(fanConfig.get("fan", "thresholdOff")) 
-        thresholdOn = float(fanConfig.get("fan", "thresholdOn")) 
-    except:
+        fanConfig = Config().fan_settings
+        threshold_off = float(fanConfig.get("thresholdOff", 50))
+        threshold_on = float(fanConfig.get("thresholdOn", 60))
+    except Exception as ex:
+        print("Error getting fanSettings from config: " + ex)
         pass
 
-    if float(temp1) >= thresholdOn:
+    if float(temp1) >= threshold_on:
         fan = 'On'
-    if fan == 'On' and float(temp1) <= thresholdOff:
+    if fan == 'On' and float(temp1) <= threshold_off:
         fan = 'Off'
 
-    cpuUsage = psutil.cpu_percent(interval=1)
-    cpuUsage = "{0:.2f}".format(cpuUsage)
+    cpu_usage = psutil.cpu_percent(interval=1)
+    cpu_usage = "{0:.2f}".format(cpu_usage)
 
-    memUsage = psutil.virtual_memory()
-    memUsage = "{0:.2f}".format(memUsage[2])
+    mem_usage = psutil.virtual_memory()
+    mem_usage = "{0:.2f}".format(mem_usage[2])
 
-    info = {'celsius':temp1, 'fahrenheit':temp2, 'fan':fan, 'cpuUsage':cpuUsage, 'memUsage':memUsage}
+    info = {
+        'celsius': temp1,
+        'fahrenheit': temp2,
+        'fan': fan,
+        'cpuUsage': cpu_usage,
+        'memUsage': mem_usage,
+    }
     return jsonify(info)
 
 @app.route('/api/profile/user/update', methods=["POST"])
 @auth.login_required
 def setUser():
     user = json.loads(request.data)
-    return jsonify(Profile.setUser(user))
+    return jsonify(Profile.set_user(user))
 
 @app.route('/api/profile/user', methods=["GET"])
 @auth.login_required
 def getUser():
-    return jsonify(Profile.getUser())
+    return jsonify(Profile.get_user())
 
 @app.route('/api/profile/theme/update', methods=["POST"])
 @auth.login_required
 def updateTheme():
     theme = json.loads(request.data)
-    return jsonify(Profile.setTheme(theme))
+    return jsonify(Profile.set_theme(theme))
 
 @app.route('/api/profile/theme', methods=["GET"])
 def getTheme():
-    return jsonify(Profile.getTheme())
+    return jsonify(Profile.get_theme())
 
 @app.route('/api/pi/settings/fan/update', methods=["POST"])
 @auth.login_required
 def updateFanSettings():
     fanSettings = json.loads(request.data)
-    return jsonify(Settings.setFanSettings(fanSettings))
+    return jsonify(Settings.set_fan_settings(fanSettings))
 
 @app.route('/api/pi/settings/fan', methods=["GET"])
 @auth.login_required
 def getFanSettings():
-    return jsonify(Settings.getFanSettings())
+    return jsonify(Settings.get_fan_settings())
 
 @app.route('/api/pi/settings/button/update', methods=["POST"])
 @auth.login_required
 def updateButtonSettings():
     buttonSettings = json.loads(request.data)
-    return jsonify(Settings.setButtonSettings(buttonSettings))
+    return jsonify(Settings.set_button_settings(buttonSettings))
 
 @app.route('/api/pi/settings/version', methods=["GET"])
 @auth.login_required
 def getVersion():
-    return jsonify(Settings.getVersion())
+    return jsonify(Settings.get_version())
 
 @app.route('/api/pi/settings/version/check', methods=["GET"])
 @auth.login_required
 def checkUpdates():
-    return jsonify(Settings.checkUpdates())
+    return jsonify(Settings.check_updates())
 
 @app.route('/api/pi/settings/version/update', methods=["GET"])
 @auth.login_required
 def updateVersion():
-    return jsonify(Settings.updateVersion())
+    return jsonify(Settings.update_version())
 
 @app.route('/api/pi/settings/button', methods=["GET"])
 @auth.login_required
 def getButtonSettings():
-    return jsonify(Settings.getButtonSettings())
+    return jsonify(Settings.get_button_settings())
 
 @app.route('/api/game/consoles', methods=["GET"])
 @auth.login_required
