@@ -4,6 +4,7 @@ import os, psutil, json, logging
 from flask import Flask, render_template, jsonify, request, session, redirect
 from flask_httpauth import HTTPBasicAuth
 from flask_api import status
+from logger import create_logger
 
 from user import User
 from config import Config
@@ -11,6 +12,8 @@ from game import Game
 from settings import Settings
 from nfc import NFC
 from profile import Profile
+
+custom_logger = create_logger()
 
 log = logging.getLogger('werkzeug')
 log.setLevel(logging.ERROR)
@@ -22,6 +25,18 @@ fan = 'Off'
 ## flask app
 app = Flask(__name__)
 app.config['SECRET_KEY'] = '1234567890' #os.urandom(12)
+
+# Configure Flask to use the custom logger
+app.logger.handlers = custom_logger.handlers
+app.logger.setLevel(logging.INFO)
+
+# Disable default Werkzeug logging
+werkzeug_log = logging.getLogger('werkzeug')
+werkzeug_log.setLevel(logging.WARNING)
+
+# Optionally, redirect Werkzeug logs to your custom logger
+for handler in custom_logger.handlers:
+    werkzeug_log.addHandler(handler)
 
 @auth.verify_password
 def verify_password(token, password):
@@ -82,7 +97,10 @@ def getPiInfo():
     global fan
 
     res = os.popen('vcgencmd measure_temp').readline()
-    temp1 = float(res.replace("temp=", "").replace("'C\n" ,""))
+    import re
+    # use regex to parse the temperature from the string
+    res = re.sub(r"temp=(\d+.\d+)'C", r"\1", res)
+    temp1 = float(res)
     temp2 = float(temp1 * 1.8) + 32.0
     temp1 = "{0:.2f}".format(temp1)
     temp2 = "{0:.2f}".format(temp2)
