@@ -8,7 +8,7 @@ class Profile:
     def __init__(self):
         self.config = Config()
 
-    def set_user(self, user: dict) -> bool:
+    def set_user(self, user):
         """
         Update and save user in config file
 

@@ -1,7 +1,8 @@
 #!/usr/bin/python 
 # config.py
 
-import ConfigParser
+from typing import Optional
+from configparser import ConfigParser
 
 
 class Config:
@@ -22,6 +23,7 @@ class Config:
         self.user = self.get_user()
         self.fan_settings = self.get_fan_settings()
         self.button_settings = self.get_button_settings()
+        self.pi_version = self.get_pi_model()
 
     def load_config(self):
         """
@@ -81,3 +83,19 @@ class Config:
         Get the button settings from the config file
         """
         return self.config.get("button", "option")
+
+    @staticmethod
+    def get_pi_model():
+        """
+        Determine the Raspberry Pi model from the device-tree model file
+
+        :return: Raspberry Pi model number, if available
+        :rtype: Optional[int]
+        """
+        with open('/proc/device-tree/model', 'r') as file:
+            data = file.read()
+        import re
+        numbers = re.findall(r'[0-9]+', data)
+        if numbers:
+            return numbers[0]
+        return None

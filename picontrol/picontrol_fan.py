@@ -1,5 +1,6 @@
 import RPi.GPIO as GPIO
-import os, time, ConfigParser
+import os, time
+from configparser import ConfigParser
 
 gpioFan = 18
 
