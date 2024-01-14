@@ -1,1 +1,6 @@
 /venv/
+/picontrol/py2venv/
+/picontrol/py3venv/
+.idea
+/picontrol/.nicegui
+```
