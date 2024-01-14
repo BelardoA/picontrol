@@ -174,6 +174,10 @@ def login() -> Optional[RedirectResponse]:
     if app.storage.user.get('authenticated', False):
         return RedirectResponse('/')
     with ui.card().classes('absolute-center'):
+        with ui.row():
+            ui.image('/assets/img/logo.svg').classes('w-10 h-10 align-middle')
+            ui.label('PiControl').classes('text-3xl align-middle')
+        ui.separator()
         username = ui.input('Username').on('keydown.enter', try_login)
         password = ui.input('Password', password=True, password_toggle_button=True).on('keydown.enter', try_login)
         ui.button('Log in', on_click=try_login)
