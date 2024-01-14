@@ -100,6 +100,9 @@ def settings_page() -> None:
             .bind_value_to(first_config.fan_settings, "interval")
             .props("label-always")
         )
+        with ui.row():
+            ui.label("Current Temp: ")
+            # TODO add current temp in F and C
         ui.separator()
         ui.button("Save", on_click=update_fan_settings).classes("mt-4 ml-auto")
 
