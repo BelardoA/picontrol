@@ -8,7 +8,7 @@ from typing import Optional
 
 class Config:
     """
-    Config class to load and save config files from disk
+    Config class to load and save config files from disk as well as provide default values for missing keys.
     """
 
     def __init__(self):
@@ -34,7 +34,7 @@ class Config:
         self.config = self.get_config()
         self.version = self.config["version"]["number"]
         self.user = self.config["user"]
-        self.theme = self.user["theme"]
+        self.site_settings = self.config["site"]
         self.fan_settings = self.config["fan"]
         self.button_settings = self.config["button"]["option"]
         self.pi_version = self.get_pi_model()
@@ -102,6 +102,7 @@ class Config:
         """
         with open(self.config_file, 'w') as out_file:
             json.dump(config, out_file, indent=4)
+            self.config = config
         return os.path.exists(self.config_file)
 
     @staticmethod
