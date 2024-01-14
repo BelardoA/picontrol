@@ -1,4 +1,4 @@
-#!/usr/bin/python 
+#!/usr/bin/python3
 # config.py
 
 import json
@@ -17,24 +17,15 @@ class Config:
                 "username": "picontrol",
                 "password": "password",
             },
-            "site": {
-                "theme": "#3bb143",
-                "dark_mode": False
-            },
-            "fan": {
-                "threshold_on": 60,
-                "threshold_off": 50,
-                "interval": 10
-            },
-            "button": {
-                "option": 1
-            },
-            "status": "web"
+            "site": {"theme": "#3bb143", "dark_mode": False},
+            "fan": {"threshold_on": 60, "threshold_off": 50, "interval": 10},
+            "button": {"option": 1},
+            "status": "web",
         }
         # self.update_version = self.parse_config(self.update_path + self.version_file)
-        self.update_path = '/home/pi/scripts/picontrol_update/picontrol/configs'
+        self.update_path = "/home/pi/scripts/picontrol_update/picontrol/configs"
         # self.config_file = '/home/pi/scripts/picontrol/configs/config.json'
-        self.config_file = f'{os.getcwd()}/configs/config.json'
+        self.config_file = f"{os.getcwd()}/configs/config.json"
         self.config = self.get_config()
         self.version = self.config["version"]["number"]
         self.user = self.config["user"]
@@ -85,15 +76,15 @@ class Config:
         """
         if not os.path.exists(self.config_file):
             print("Config file not found, creating...")
-            with open(self.config_file, 'w') as out_file:
+            with open(self.config_file, "w") as out_file:
                 json.dump(self.template, out_file, indent=4)
                 config = self.template
         else:
             print("Config file found, verifying...")
-            with open(self.config_file, 'r') as file:
+            with open(self.config_file, "r") as file:
                 config = json.load(file)
             config = self.verify_config(self.template, config)
-            with open(self.config_file, 'w') as out_file:
+            with open(self.config_file, "w") as out_file:
                 json.dump(config, out_file, indent=4)
         return config
 
@@ -104,7 +95,7 @@ class Config:
         :param dict config: Dictionary to save to disk.
         :return: True if successful, False otherwise.
         """
-        with open(self.config_file, 'w') as out_file:
+        with open(self.config_file, "w") as out_file:
             json.dump(config, out_file, indent=4)
             self.config = config
         return os.path.exists(self.config_file)
@@ -118,10 +109,11 @@ class Config:
         :rtype: Optional[int]
         """
         try:
-            with open('/proc/device-tree/model', 'r') as file:
+            with open("/proc/device-tree/model", "r") as file:
                 data = file.read()
             import re
-            if numbers := re.findall(r'[0-9]+', data):
+
+            if numbers := re.findall(r"[0-9]+", data):
                 return numbers[0]
         except FileNotFoundError:
             return None

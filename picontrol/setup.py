@@ -24,8 +24,7 @@ def _strip(file_name: str) -> str:
 
 INSTALL_REQUIRES = [
     "wheel",
-    "setuptools"
-    "Adafruit-GPIO",
+    "setuptools" "Adafruit-GPIO",
 ]
 
 # Define requirement lists
