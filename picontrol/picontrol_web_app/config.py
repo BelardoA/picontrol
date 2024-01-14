@@ -16,16 +16,20 @@ class Config:
             "user": {
                 "username": "picontrol",
                 "password": "password",
-                "theme": "default"
+            },
+            "site": {
+                "theme": "#f00",
+                "dark_mode": False
             },
             "fan": {
-                "thresholdOn": 65,
-                "thresholdOff": 55,
-                "interval": 5
+                "threshold_on": 60,
+                "threshold_off": 50,
+                "interval": 10
             },
             "button": {
                 "option": 1
-            }
+            },
+            "status": "web"
         }
         # self.update_version = self.parse_config(self.update_path + self.version_file)
         self.update_path = '/home/pi/scripts/picontrol_update/picontrol/configs'
