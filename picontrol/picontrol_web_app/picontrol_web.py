@@ -5,9 +5,9 @@ Please see the `OAuth2 example at FastAPI <https://fastapi.tiangolo.com/tutorial
 use the great `Authlib package <https://docs.authlib.org/en/v0.13/client/starlette.html#using-fastapi>`_ to implement a classing real authentication system.
 Here we just demonstrate the NiceGUI integration.
 """
+import asyncio
 import os
 from typing import Optional
-from dataclasses import dataclass
 
 from fastapi import Request
 from fastapi.responses import RedirectResponse
@@ -41,6 +41,12 @@ class AuthMiddleware(BaseHTTPMiddleware):
 app.add_middleware(AuthMiddleware)
 app.add_static_files('/assets', f'{os.getcwd()}/picontrol_web_app/assets')
 
+
+class header_label(ui.label):
+    def _handle_text_change(self, text: str) -> None:
+        super()._handle_text_change(text)
+
+header_model = {'header': 'Dashboard'}
 
 def logout() -> None:
     app.storage.user.update({'authenticated': False})
@@ -91,24 +97,22 @@ def change_user():
 
 
 def restart_pi() -> None:
-    from asyncio import sleep
     ui.notify('Restarting Pi...', color='warning')
-    sleep(1)
+    asyncio.sleep(1)
     # os.system("sudo reboot")
 
 
 def shutdown_pi() -> None:
-    from asyncio import sleep
     ui.notify('Shutting down Pi...', color='red')
-    sleep(2)
+    asyncio.sleep(2)
     # os.system("sudo shutdown -h now")
-
 
 
 @ui.page('/')
 def main() -> None:
     config = Config()
     color = config.site_settings['theme']
+    header = 'Dashboard'
 
     def toggle_dark_mode():
         # update the config file
@@ -118,7 +122,7 @@ def main() -> None:
         config.save_config(updated_config)
 
     dark = ui.dark_mode(value=config.site_settings["dark_mode"], on_change=toggle_dark_mode)
-    dark_val = '☀️' if dark.value == False else '🌕'
+    dark_val = '☀️' if dark.value is False else '🌑'
 
     ui.colors(primary=color)
     with ui.left_drawer().classes('border p-4 top-0 left-0 absolute h-full').props('width=220'):
@@ -126,40 +130,47 @@ def main() -> None:
             ui.image('/assets/img/logo.svg').classes('w-10 h-10 align-middle')
             ui.label('PiControl').classes('text-3xl align-middle')
         ui.separator()
-        with ui.tabs().props('vertical inline-label').classes('mr-auto') as tabs:
+        with ui.tabs(on_change=lambda e: header_model.update(header=tabs.value)).props('vertical inline-label').classes('mr-auto') as tabs:
             ui.tab('Dashboard', icon='img:/assets/img/dashboard.svg').classes('justify-start')
             ui.tab('Games', icon='img:/assets/img/gamepad.svg').classes('justify-start')
             ui.tab('NFC', icon='img:/assets/img/tags.svg').classes('justify-start')
             ui.tab('Settings', icon='img:/assets/img/settings.svg').classes('justify-start')
-            ui.toggle(options=['☀️', '🌕'], value=dark_val, on_change=lambda: dark.toggle()).classes('justify-start')
         ui.space().classes('flex-grow')
         ui.separator()
         with ui.row():
-            with ui.button(icon='sync', on_click=lambda: restart_pi()).classes('ml-6'):
+            with ui.button(icon='sync', on_click=lambda: restart_pi()).classes('ml-3'):
                 ui.tooltip('Restart PI').classes('bg-warning font-bold')
             ui.space()
             ui.space()
-            with ui.button(icon='power_off', color="red", on_click=lambda: shutdown_pi()):
+            with ui.button(icon='power_off', color="red", on_click=lambda: shutdown_pi()).classes('mr-3'):
                 ui.tooltip('Shutdown PI').classes('bg-red-500 font-bold')
-    with ui.row().classes('border-b-2 p-4'):
-        with ui.button(icon='img:/assets/img/user.svg').classes('border p-4 top-4 right-10 absolute').props('rounded'):
-            # make the profile menu appear on the right side of the button
-            with ui.menu().classes('origin-top-right right-48 mt-10 w-48 rounded-md shadow-lg py-1'):
-                ui.menu_item('Profile', lambda: tabs.set_value('Profile')).classes('justify-start')
-                ui.menu_item('Logout', lambda: logout()).classes('justify-start')
-    with ui.column().classes('p-4'):
-        with ui.tab_panels(tabs, value='Dashboard'):
-            with ui.tab_panel('Dashboard').classes('w-full'):
-                with ui.card().props('text-align=center'):
-                    ui.label('Content of Dashboard')
-            with ui.tab_panel('Games'):
-                ui.label('Content of Games')
-            with ui.tab_panel('NFC'):
-                ui.label('Content of NFC')
-            with ui.tab_panel('Settings'):
-                ui.label('Content of Settings')
-            with ui.tab_panel('Profile'):
-                change_user()
+    with ui.card().classes('text-xl w-full'):
+        with ui.row():
+            header_label().bind_text_from(header_model, 'header')
+            ui.space()
+            with ui.button(icon='img:/assets/img/user.svg').classes('border p-4 top-0 right-4 absolute').props('rounded'):
+                # make the profile menu appear on the right side of the button
+                with ui.menu().classes('origin-top-right right-48 mt-10 w-48 rounded-md shadow-lg py-1') as menu:
+                    with ui.menu_item('Mode').classes('justify-start'):
+                        ui.space().classes('mr-2')
+                        ui.toggle(options=['☀️', '🌑'], value=dark_val, on_change=lambda: dark.toggle()).classes('justify-start')
+                    ui.menu_item('Profile', lambda: tabs.set_value('Profile')).classes('justify-start')
+                    ui.menu_item('Logout', lambda: logout()).classes('justify-start')
+                    ui.separator()
+                    ui.menu_item('Close', on_click=menu.close)
+
+    with ui.tab_panels(tabs, value='Dashboard').classes('w-full'):
+        with ui.tab_panel('Dashboard').classes('w-full'):
+            with ui.card().props('text-align=center'):
+                ui.label('Content of Dashboard')
+        with ui.tab_panel('Games'):
+            ui.label('Content of Games')
+        with ui.tab_panel('NFC'):
+            ui.label('Content of NFC')
+        with ui.tab_panel('Settings'):
+            ui.label('Content of Settings')
+        with ui.tab_panel('Profile'):
+            change_user()
 
 
 @ui.page('/login')
