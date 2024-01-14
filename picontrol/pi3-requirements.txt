@@ -13,7 +13,6 @@ dnspython==1.12.0
 html5lib==0.999
 itsdangerous==0.24
 ndg-httpsclient==0.3.2
-pyopenssl==0.13.1
 pyasn1==0.1.7
 pycrypto==2.6.1
 pyudev==0.16.1
