@@ -18,7 +18,7 @@ class Config:
                 "password": "password",
             },
             "site": {
-                "theme": "#f00",
+                "theme": "#3bb143",
                 "dark_mode": False
             },
             "fan": {

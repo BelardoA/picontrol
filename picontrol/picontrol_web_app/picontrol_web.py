@@ -79,15 +79,15 @@ def change_user():
         with ui.card().classes('w-full'):
             ui.label('Theme').classes('text-xl')
             ui.separator()
-            ui.button('Default', on_click=lambda: ui.colors()).tooltip('Default theme (Blue)')
-            ui.button('Orange', on_click=lambda: save_theme('#ff4500')).tooltip('Set theme to orange')
-            ui.button('Gray', on_click=lambda: save_theme('#555')).tooltip('Set theme to gray')
-            ui.button('Red', on_click=lambda: save_theme('#f00')).tooltip('Set theme to red')
-            ui.button('Green', on_click=lambda: save_theme('#3bb143')).tooltip('Set theme to green')
-            ui.button('Yellow', on_click=lambda: save_theme('#ffbf00')).tooltip('Set theme to yellow')
-            ui.button('Purple', on_click=lambda: save_theme('#f0f')).tooltip('Set theme to purple')
-            ui.button('Brown', on_click=lambda: save_theme('#960')).tooltip('Set theme to brown')
-            ui.button('Pink', on_click=lambda: save_theme('#FFC0CB')).tooltip('Set theme to pink')
+            ui.button('Default', on_click=lambda: save_theme("#3bb143")).tooltip('Default theme (Green)')
+            ui.button('Orange', on_click=lambda: save_theme('#ff4500')).tooltip('Set theme to Orange')
+            ui.button('Gray', on_click=lambda: save_theme('#555')).tooltip('Set theme to Gray')
+            ui.button('Red', on_click=lambda: save_theme('#f00')).tooltip('Set theme to Red')
+            ui.button('Blue', on_click=lambda: save_theme('#5898d4')).tooltip('Set theme to Blue')
+            ui.button('Yellow', on_click=lambda: save_theme('#ffbf00')).tooltip('Set theme to Yellow')
+            ui.button('Purple', on_click=lambda: save_theme('#f0f')).tooltip('Set theme to Purple')
+            ui.button('Brown', on_click=lambda: save_theme('#960')).tooltip('Set theme to Brown')
+            ui.button('Pink', on_click=lambda: save_theme('#FFC0CB')).tooltip('Set theme to Pink')
 
 
 def restart_pi() -> None:
@@ -164,6 +164,8 @@ def main() -> None:
 
 @ui.page('/login')
 def login() -> Optional[RedirectResponse]:
+    ui.colors(primary="#3bb143")
+
     def try_login() -> None:  # local function to avoid passing username and password as arguments
         if passwords.get(username.value) == password.value:
             app.storage.user.update({'username': username.value, 'authenticated': True})

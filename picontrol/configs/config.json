@@ -5,8 +5,8 @@
         "theme": "default"
     },
     "site": {
-        "theme": "#ff4500",
-        "dark_mode": true
+        "theme": "#3bb143",
+        "dark_mode": false
     },
     "fan": {
         "threshold_on": 60,
