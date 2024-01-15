@@ -1,11 +1,10 @@
 {
     "user": {
         "username": "picontrol",
-        "password": "password",
-        "theme": "default"
+        "password": "password"
     },
     "site": {
-        "theme": "#3bb143",
+        "theme": "#ff4500",
         "dark_mode": false
     },
     "fan": {
