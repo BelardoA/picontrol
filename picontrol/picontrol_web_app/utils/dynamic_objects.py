@@ -3,7 +3,7 @@
 from nicegui import ui
 
 
-class HeaderLabel(ui.label):
+class DynamicLabel(ui.label):
     """
     This class is a subclass of NiceGUI's label class. It is used to display the header of the page.
 
