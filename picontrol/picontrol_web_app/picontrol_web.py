@@ -3,7 +3,6 @@
 import asyncio
 import os
 from typing import Optional
-from utils import HeaderLabel, SliderValue
 
 from fastapi import Request
 from fastapi.responses import RedirectResponse
@@ -11,6 +10,7 @@ from nicegui import Client, app, ui
 from starlette.middleware.base import BaseHTTPMiddleware
 
 from config import Config
+from utils import ButtonTable, DynamicLabel, SliderValue
 
 first_config = Config()
 user = first_config.user
@@ -73,6 +73,24 @@ def settings_page() -> None:
         first_config.save_config(updated_config)
         ui.notify("Fan settings updated.", close_button=True, color="positive")
 
+    def update_button_settings(button_option: int) -> None:
+        """
+        Function to update the button settings in the config file.
+
+        :return: None
+        """
+        conf = Config().get_config()
+        updated_config = conf.copy()
+        updated_config["button"]["option"] = button_option
+        first_config.save_config(updated_config)
+        button_model.update(
+            current_settings=f"Button Configuration - Currently {'Classic Buttons' if button_option == 1 else 'Pi Buttons'}"
+        )
+        ui.notify("Button settings updated.", close_button=True, color="positive")
+
+    button_model = {
+        "current_settings": f"Button Configuration - Currently {'Classic Buttons' if Config().button_settings == 1 else 'Pi Buttons'}"
+    }
     with ui.card().classes("w-full"):
         ui.label("Fan Configuration").classes("text-xl")
         ui.separator()
@@ -105,6 +123,31 @@ def settings_page() -> None:
             # TODO add current temp in F and C
         ui.separator()
         ui.button("Save", on_click=update_fan_settings).classes("mt-4 ml-auto")
+    with ui.card().classes("w-full"):
+        DynamicLabel().bind_text_from(button_model, "current_settings").classes(
+            "text-xl"
+        )
+        ui.separator()
+        classic_columns, classic_rows = ButtonTable.create_table(
+            column2="PI On - Game / Es Running",
+            column3="PI On - Simulated Off",
+            rowVal2="Press to Exit Game / ES",
+            rowVal3="Press to Load Game / ES; PI Shuts Down if idle for 30 seconds",
+            rowVal4="N/A",
+        )
+        nes_columns, nes_rows = ButtonTable.create_table(
+            column2="PI On - Game Running",
+            column3="PI On - ES Running",
+            rowVal2="Press to turn off Raspberry Pi",
+            rowVal3="Press to turn off Raspberry Pi",
+            rowVal4="Press to Start Game from NFC Tag or last Game played",
+        )
+        ui.table(columns=classic_columns, rows=classic_rows, row_key="button").classes(
+            "w-full"
+        )
+        ui.button("Classic Buttons", on_click=lambda: update_button_settings(1))
+        ui.table(columns=nes_columns, rows=nes_rows, row_key="button").classes("w-full")
+        ui.button("Pi Buttons", on_click=lambda: update_button_settings(2))
 
 
 def profile_page() -> None:
@@ -228,9 +271,13 @@ def shutdown_pi() -> None:
 def main() -> None:
     config = Config()
     color = config.site_settings["theme"]
-    header = "Dashboard"
 
-    def toggle_dark_mode():
+    def save_dark_mode_settings() -> None:
+        """
+        Function to toggle the dark mode setting in the config file.
+
+        :return: None
+        """
         # update the config file
         conf = Config().get_config()
         updated_config = conf.copy()
@@ -238,7 +285,7 @@ def main() -> None:
         config.save_config(updated_config)
 
     dark = ui.dark_mode(
-        value=config.site_settings["dark_mode"], on_change=toggle_dark_mode
+        value=config.site_settings["dark_mode"], on_change=save_dark_mode_settings
     )
     dark_val = "☀️" if dark.value is False else "🌑"
     header_model = {"header": "Dashboard"}
@@ -274,7 +321,7 @@ def main() -> None:
                 ui.tooltip("Shutdown PI").classes("bg-red-500 font-bold")
     with ui.card().classes("text-xl w-full"):
         with ui.row():
-            HeaderLabel().bind_text_from(header_model, "header")
+            DynamicLabel().bind_text_from(header_model, "header")
             ui.space()
             with ui.button(icon="img:/assets/img/user.svg").classes(
                 "border p-4 top-0 right-4 absolute"
@@ -341,7 +388,7 @@ def login() -> Optional[RedirectResponse]:
 
 
 ui.run(
-    port=5000,
+    port=8080,
     title="PiControl",
     favicon=f"{os.getcwd()}/picontrol_web_app/assets/img/logo.svg",
     storage_secret="picontrol",
