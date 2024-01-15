@@ -14,7 +14,7 @@ from utils import ButtonTable, DynamicLabel, SliderValue
 
 first_config = Config()
 user = first_config.user
-# in reality users passwords would obviously need to be hashed
+
 passwords = {user["username"]: user["password"]}
 unrestricted_page_routes = {"/login"}
 selected_theme = first_config.site_settings["theme"]
