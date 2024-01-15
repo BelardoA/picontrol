@@ -67,8 +67,8 @@ def settings_page() -> None:
         """
         conf = Config().get_config()
         updated_config = conf.copy()
-        updated_config["fan"]["threshold_on"] = threshhold_on.value
-        updated_config["fan"]["threshold_off"] = threshhold_off.value
+        updated_config["fan"]["threshold_on"] = threshold_on.value
+        updated_config["fan"]["threshold_off"] = threshold_off.value
         updated_config["fan"]["interval"] = interval.value
         first_config.save_config(updated_config)
         ui.notify("Fan settings updated.", close_button=True, color="positive")
@@ -95,7 +95,7 @@ def settings_page() -> None:
         ui.label("Fan Configuration").classes("text-xl")
         ui.separator()
         ui.label("Threshold On - Celsius").classes("bold")
-        threshhold_on = (
+        threshold_on = (
             SliderValue(
                 min=0, max=100, step=1, value=first_config.fan_settings["threshold_on"]
             )
@@ -103,7 +103,7 @@ def settings_page() -> None:
             .props("label-always")
         )
         ui.label("Threshold Off - Celsius").classes("bold")
-        threshhold_off = (
+        threshold_off = (
             SliderValue(
                 min=0, max=50, step=1, value=first_config.fan_settings["threshold_off"]
             )
