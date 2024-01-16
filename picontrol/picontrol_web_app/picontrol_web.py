@@ -10,7 +10,7 @@ from nicegui import Client, app, ui
 from starlette.middleware.base import BaseHTTPMiddleware
 
 from config import Config
-from utils import ButtonTable, DynamicLabel, SliderValue
+from utils import ButtonTable, DynamicLabel, SliderValue, create_confirmation
 
 first_config = Config()
 user = first_config.user
@@ -245,26 +245,30 @@ def profile_page() -> None:
             )
 
 
-def restart_pi() -> None:
+def restart_pi(dialog: ui.dialog) -> None:
     """
     Function to restart the Raspberry Pi.
 
+    :param ui.dialog dialog: The dialog box to close.
     :return: None
     """
+    dialog.close()
     ui.notify("Restarting Pi...", color="warning")
     asyncio.sleep(1)
-    # os.system("sudo reboot")
+    os.system("sudo reboot")
 
 
-def shutdown_pi() -> None:
+def shutdown_pi(dialog: ui.dialog) -> None:
     """
     Function to shut down the Raspberry Pi.
 
+    :param ui.dialog dialog: The dialog box to close.
     :return: None
     """
+    dialog.close()
     ui.notify("Shutting down Pi...", color="red")
     asyncio.sleep(2)
-    # os.system("sudo shutdown -h now")
+    os.system("sudo shutdown -h now")
 
 
 @ui.page("/")
@@ -310,13 +314,23 @@ def main() -> None:
             )
         ui.space().classes("flex-grow")
         ui.separator()
+        shutdown_confirmation = create_confirmation(
+            title="Shutdown Pi",
+            message="Are you sure you want to shutdown the Raspberry Pi?",
+            on_click=shutdown_pi,
+        )
+        reboot_confirmation = create_confirmation(
+            title="Restart Pi",
+            message="Are you sure you want to restart the Raspberry Pi?",
+            on_click=restart_pi,
+        )
         with ui.row():
-            with ui.button(icon="sync", on_click=lambda: restart_pi()).classes("ml-3"):
+            with ui.button(icon="sync", on_click=lambda: reboot_confirmation.open()).classes("ml-3"):
                 ui.tooltip("Restart PI").classes("bg-warning font-bold")
             ui.space()
             ui.space()
             with ui.button(
-                icon="power_off", color="red", on_click=lambda: shutdown_pi()
+                icon="power_off", color="red", on_click=lambda: shutdown_confirmation.open()
             ).classes("mr-3"):
                 ui.tooltip("Shutdown PI").classes("bg-red-500 font-bold")
     with ui.card().classes("text-xl w-full"):
