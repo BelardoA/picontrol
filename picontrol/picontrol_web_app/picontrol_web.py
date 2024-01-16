@@ -292,7 +292,6 @@ def main() -> None:
         value=config.site_settings["dark_mode"], on_change=save_dark_mode_settings
     )
     dark_val = "☀️" if dark.value is False else "🌑"
-    header_model = {"header": "Dashboard"}
     ui.colors(primary=color)
     with ui.left_drawer().classes("border p-4 top-0 left-0 absolute h-full").props(
         "width=220"
@@ -301,9 +300,7 @@ def main() -> None:
             ui.image("/assets/img/logo.svg").classes("w-10 h-10 align-middle")
             ui.label("PiControl").classes("text-3xl align-middle")
         ui.separator()
-        with ui.tabs(on_change=lambda e: header_model.update(header=tabs.value)).props(
-            "vertical inline-label"
-        ).classes("mr-auto") as tabs:
+        with ui.tabs().props("vertical inline-label").classes("mr-auto") as tabs:
             ui.tab("Dashboard", icon="img:/assets/img/dashboard.svg").classes(
                 "justify-start"
             )
@@ -335,7 +332,7 @@ def main() -> None:
                 ui.tooltip("Shutdown PI").classes("bg-red-500 font-bold")
     with ui.card().classes("text-xl w-full"):
         with ui.row():
-            DynamicLabel().bind_text_from(header_model, "header")
+            ui.label("Dashboard").bind_text_from(tabs, "value")
             ui.space()
             with ui.button(icon="img:/assets/img/user.svg").classes(
                 "border p-4 top-0 right-4 absolute"
