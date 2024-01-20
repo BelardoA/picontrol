@@ -1,5 +1,6 @@
 #!/usr/bin/python3
 # config.py
+"""Config class to load and save config files from disk as well as provide default values for missing keys."""
 
 import json
 import os
