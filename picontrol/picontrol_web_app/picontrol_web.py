@@ -142,11 +142,11 @@ def settings_page() -> None:
             rowVal3="Press to turn off Raspberry Pi",
             rowVal4="Press to Start Game from NFC Tag or last Game played",
         )
-        ui.table(columns=classic_columns, rows=classic_rows, row_key="button").classes(
+        ui.table(title="Classic Buttons", columns=classic_columns, rows=classic_rows, row_key="button").classes(
             "w-full"
         )
         ui.button("Classic Buttons", on_click=lambda: update_button_settings(1))
-        ui.table(columns=nes_columns, rows=nes_rows, row_key="button").classes("w-full")
+        ui.table(title="Pi Buttons", columns=nes_columns, rows=nes_rows, row_key="button").classes("w-full border-2")
         ui.button("Pi Buttons", on_click=lambda: update_button_settings(2))
 
 
