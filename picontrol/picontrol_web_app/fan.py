@@ -12,9 +12,7 @@ class Fan:
     Class to control fan based on CPU temperature.
     """
     def __init__(self):
-        self.fan_on = False
         self.cpu_temp = 0
-        self.cpu_load = 0
         self.fan_settings = Config().fan_settings
         self.threshold_on = self.fan_settings["threshold_on"]
         self.threshold_off = self.fan_settings["threshold_off"]
