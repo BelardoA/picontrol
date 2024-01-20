@@ -1,6 +1,8 @@
+
 #!/usr/bin/python3
 """Picontrol Web Application"""
 import asyncio
+import multiprocessing
 import os
 from typing import Optional
 
@@ -10,10 +12,16 @@ from nicegui import Client, app, ui
 from starlette.middleware.base import BaseHTTPMiddleware
 
 from config import Config
+from fan import Fan
 from utils import ButtonTable, DynamicLabel, SliderValue, create_confirmation
 
 first_config = Config()
 user = first_config.user
+# Create a multiprocessing.Queue
+queue = multiprocessing.Queue()
+
+# Create an instance of the Fan class, passing the queue to it
+fan = Fan(queue)
 
 passwords = {user["username"]: user["password"]}
 unrestricted_page_routes = {"/login"}
@@ -119,7 +127,18 @@ def settings_page() -> None:
             .props("label-always")
         )
         with ui.row():
-            ui.label("Current Temp: ")
+            current_fan = ui.label(f"Fan: {'On' if fan.fan_on else 'Off'}")
+            cpu_temps = ui.label(f"Current Temp: {fan.cpu_temp}")
+            # Use ui.timer to periodically check the queue and update the labels
+
+            def update_labels():
+                if not queue.empty():
+                    cpu_temp, fan_on, fan_interval = queue.get()
+                    cpu_temps.set_text(f'CPU Temp: {cpu_temp}')
+                    current_fan.set_text(f"Fan: {'On' if fan_on is True else 'Off'}")
+
+            ui.timer(interval=1, callback=update_labels, )  # Update labels every 1 second
+
             # TODO add current temp in F and C
         ui.separator()
         ui.button("Save", on_click=update_fan_settings).classes("mt-4 ml-auto")
