@@ -127,17 +127,17 @@ def settings_page() -> None:
             .props("label-always")
         )
         with ui.row():
+            cpu_temps = ui.label(f'CPU: {fan.cpu_temp}°C / {fan.cpu_temp * 9 / 5 + 32}°F')
             current_fan = ui.label(f"Fan: {'On' if fan.fan_on else 'Off'}")
-            cpu_temps = ui.label(f"Current Temp: {fan.cpu_temp}")
             # Use ui.timer to periodically check the queue and update the labels
 
             def update_labels():
                 if not queue.empty():
                     cpu_temp, fan_on, fan_interval = queue.get()
-                    cpu_temps.set_text(f'CPU Temp: {cpu_temp}')
+                    cpu_temps.set_text(f'CPU: {cpu_temp}°C / {cpu_temp * 9 / 5 + 32}°F')
                     current_fan.set_text(f"Fan: {'On' if fan_on is True else 'Off'}")
-
-            ui.timer(interval=1, callback=update_labels, )  # Update labels every 1 second
+            # Update labels every 1 second
+            ui.timer(interval=1, callback=update_labels)
 
             # TODO add current temp in F and C
         ui.separator()
