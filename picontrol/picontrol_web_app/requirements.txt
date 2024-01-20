@@ -1,0 +1,5 @@
+fastapi==0.109.0
+nicegui==1.4.10
+starlette==0.35.1
+psutil==5.9.8
+RPi.GPIO
