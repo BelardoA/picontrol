@@ -1,11 +1,13 @@
 #!/usr/bin/python3
 # fan.py
 """Enables fan control for PiControl."""
-# import RPi.GPIO as GPIO
-import os
 import asyncio
 import multiprocessing
+# import RPi.GPIO as GPIO
+import os
 from typing import Union
+
+import psutil
 
 from config import Config
 
@@ -25,6 +27,8 @@ class Fan:
 
         self.pi_version = Config().get_pi_model()
         self.cpu_temp = self.get_cpu_temp()
+        self.cpu_usage = self.get_cpu_usage()
+        self.mem_usage = self.get_mem_usage()
         self.fan_settings = Config().fan_settings
         self.threshold_on = self.fan_settings["threshold_on"]
         self.threshold_off = self.fan_settings["threshold_off"]
@@ -82,6 +86,8 @@ class Fan:
         self.threshold_off = config.fan_settings["threshold_off"]
         self.interval = config.fan_settings["interval"]
         self.cpu_temp = self.get_cpu_temp()
+        self.cpu_usage = self.get_cpu_usage()
+        self.mem_usage = self.get_mem_usage()
 
     def get_cpu_temp(self) -> Union[float, str]:
         """
@@ -103,6 +109,26 @@ class Fan:
             res = os.popen('vcgencmd measure_temp').readline()
             return res.replace("temp=", "").replace("'C\n", "")
 
+    @staticmethod
+    def get_cpu_usage() -> float:
+        """
+        Get CPU usage from psutil.
+
+        :return: CPU usage as a float.
+        :rtype: float
+        """
+        return psutil.cpu_percent(interval=1)
+
+    @staticmethod
+    def get_mem_usage() -> float:
+        """
+        Get memory usage from psutil.
+
+        :return: Memory usage as a float.
+        :rtype: float
+        """
+        return psutil.virtual_memory()[2]
+
     async def start_loop(self) -> None:
         """
         Start the fan control loop for detecting CPU temperature and controlling the fan.
@@ -119,5 +145,5 @@ class Fan:
                 self.fan_on = False
 
             # Put the updated values into the queue
-            self.queue.put((self.cpu_temp, self.fan_on, self.interval))
+            self.queue.put((self.cpu_temp, self.fan_on, self.interval, self.cpu_usage, self.mem_usage))
             await asyncio.sleep(self.interval)
