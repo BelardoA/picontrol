@@ -1,9 +1,10 @@
-
 #!/usr/bin/python3
+
 """Picontrol Web Application"""
 import asyncio
 import multiprocessing
 import os
+from datetime import datetime
 from typing import Optional
 
 from fastapi import Request
@@ -30,6 +31,8 @@ selected_theme = first_config.site_settings["theme"]
 cpu_temp = fan.cpu_temp
 fan_on = fan.fan_on
 fan_interval = fan.interval
+cpu_usage = fan.cpu_usage
+mem_usage = fan.mem_usage
 
 
 def update_fan_globals() -> None:
@@ -38,9 +41,9 @@ def update_fan_globals() -> None:
 
     :return: None
     """
-    global cpu_temp, fan_on, fan_interval
+    global cpu_temp, fan_on, fan_interval, cpu_usage, mem_usage
     if not queue.empty():
-        cpu_temp, fan_on, fan_interval = queue.get()
+        cpu_temp, fan_on, fan_interval, cpu_usage, mem_usage = queue.get()
 
 
 class AuthMiddleware(BaseHTTPMiddleware):
@@ -77,27 +80,51 @@ app.add_static_files("/assets", f"{os.getcwd()}/picontrol_web_app/assets")
 
 
 def logout() -> None:
+    """
+    Function to log the user out of the web app.
+
+    :return: None
+    """
     app.storage.user.update({"authenticated": False})
     ui.open("/login")
 
 
 def dashboard() -> None:
+    """
+    Function to create the dashboard page. Shows the CPU temperature, fan status, cpu & mem usage.
+
+    :return: None
+    """
     def update_line_plot() -> None:
+        """
+        Function to update the line plot with the CPU temperature in Celsius and Fahrenheit.
+
+        :return: None
+        """
         update_fan_globals()
-        from datetime import datetime
         now = datetime.now()
-        y1 = cpu_temp
-        y2 = cpu_temp * 9 / 5 + 32
-        temp_plot.push([now], [[y1], [y2]])
+        temp_plot.push([now], [[cpu_temp], [cpu_temp * 9 / 5 + 32]])
+        usage_plot.push([now], [[cpu_usage], [mem_usage]])
         temp_label.set_text(f'CPU: {cpu_temp}°C / {cpu_temp * 9 / 5 + 32}°F')
         fan_label.set_text(f"System Fan: {'On' if fan_on is True else 'Off'}")
-    with ui.card().classes("w-flex"):
-        ui.label("CPU Temperature").classes("text-xl")
-        temp_plot = ui.line_plot(n=2, limit=20, figsize=(8, 5), update_every=1, clear=True).with_legend(['C', 'F'], loc='upper center', ncol=2)
-        temp_label = ui.label(f'CPU: {fan.cpu_temp}°C / {fan.cpu_temp * 9 / 5 + 32}°F')
+        usage_label.set_text('CPU: ' + f"{cpu_usage:.2f}% MEM: " + f"{mem_usage:.2f}%")
+
+    with ui.row().classes("w-full"):
+        with ui.card().classes("w-flex"):
+            ui.label("CPU & Memory Usage").classes("text-xl")
+            ui.separator()
+            usage_plot = ui.line_plot(n=2, limit=20, figsize=(7, 3), update_every=1, clear=True).with_legend(['CPU', 'Memory'], loc='upper center', ncol=2)
+            usage_label = ui.label('CPU: ' + f"{cpu_usage:.2f}% MEM: " + f"{mem_usage:.2f}%")
+            ui.separator()
+            ui.label()
+        with ui.card().classes("w-flex"):
+            ui.label("CPU Temperature").classes("text-xl")
+            ui.separator()
+            temp_plot = ui.line_plot(n=2, limit=20, figsize=(7, 3), update_every=1, clear=True).with_legend(['C', 'F'], loc='upper center', ncol=2)
+            temp_label = ui.label(f'CPU: {fan.cpu_temp}°C / {fan.cpu_temp * 9 / 5 + 32}°F')
+            ui.separator()
+            fan_label = ui.label(f"System Fan: {'On' if queue.get()[2] is True else 'Off'}")
         ui.timer(1, update_line_plot, active=True)
-        ui.separator()
-        fan_label = ui.label(f"System Fan: {'On' if queue.get()[2] is True else 'Off'}")
 
 
 def settings_page() -> None:
