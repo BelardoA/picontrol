@@ -7,7 +7,22 @@ import os
 from typing import Optional
 
 
-class Config:
+class Singleton(type):
+    """
+    Singleton metaclass to prevent multiple instances of Config from being created.
+    """
+    _instances = {}
+
+    def __call__(cls, *args, **kwargs):
+        if cls not in cls._instances:
+            instance = super(Singleton, cls).__call__(*args, **kwargs)
+            cls._instances[cls] = instance
+        else:
+            cls._instances[cls].refresh_config()
+        return cls._instances[cls]
+
+
+class Config(metaclass=Singleton):
     """
     Config class to load and save config files from disk as well as provide default values for missing keys.
     """
@@ -88,6 +103,21 @@ class Config:
             with open(self.config_file, "w") as out_file:
                 json.dump(config, out_file, indent=4)
         return config
+
+    def refresh_config(self) -> None:
+        """
+        Refresh the config file from disk.
+
+        :return: None
+        """
+        with open(self.config_file, "r") as file:
+            self.config = json.load(file)
+        self.user = self.config["user"]
+        self.version = self.config["version"]["number"]
+        self.site_settings = self.config["site"]
+        self.fan_settings = self.config["fan"]
+        self.button_settings = self.config["button"]["option"]
+        self.pi_version = self.get_pi_model()
 
     def save_config(self, config: dict) -> bool:
         """
