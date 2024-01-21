@@ -105,7 +105,7 @@ def dashboard() -> None:
         now = datetime.now()
         temp_plot.push([now], [[cpu_temp], [cpu_temp * 9 / 5 + 32]])
         usage_plot.push([now], [[cpu_usage], [mem_usage]])
-        temp_label.set_text(f'CPU: {cpu_temp}°C / {cpu_temp * 9 / 5 + 32}°F')
+        temp_label.set_text(f'CPU: {cpu_temp:.2f}°C / {cpu_temp * 9 / 5 + 32:.2f}°F')
         fan_label.set_text(f"System Fan: {'On' if fan_on is True else 'Off'}")
         usage_label.set_text('CPU: ' + f"{cpu_usage:.2f}% MEM: " + f"{mem_usage:.2f}%")
 
@@ -114,14 +114,14 @@ def dashboard() -> None:
             ui.label("CPU & Memory Usage").classes("text-xl")
             ui.separator()
             usage_plot = ui.line_plot(n=2, limit=20, figsize=(7, 3), update_every=1, clear=True).with_legend(['CPU', 'Memory'], loc='upper center', ncol=2)
-            usage_label = ui.label('CPU: ' + f"{cpu_usage:.2f}% MEM: " + f"{mem_usage:.2f}%")
+            usage_label = ui.label(f'CPU: {cpu_usage:.2f}% MEM: {mem_usage:.2f}%')
             ui.separator()
             ui.label()
         with ui.card().classes("w-flex"):
             ui.label("CPU Temperature").classes("text-xl")
             ui.separator()
             temp_plot = ui.line_plot(n=2, limit=20, figsize=(7, 3), update_every=1, clear=True).with_legend(['C', 'F'], loc='upper center', ncol=2)
-            temp_label = ui.label(f'CPU: {fan.cpu_temp}°C / {fan.cpu_temp * 9 / 5 + 32}°F')
+            temp_label = ui.label(f'CPU: {fan.cpu_temp:.2f}°C / {fan.cpu_temp * 9 / 5 + 32:.2f}°F')
             ui.separator()
             fan_label = ui.label(f"System Fan: {'On' if queue.get()[2] is True else 'Off'}")
         ui.timer(1, update_line_plot, active=True)
@@ -190,9 +190,9 @@ def settings_page() -> None:
         with ui.row():
             def update_labels():
                 update_fan_globals()
-                cpu_temps.set_text(f'CPU: {cpu_temp}°C / {cpu_temp * 9 / 5 + 32}°F')
+                cpu_temps.set_text(f'CPU: {cpu_temp:.2f}°C / {fan.cpu_temp * 9 / 5 + 32:.2f}°F')
                 current_fan.set_text(f"Fan: {'On' if fan_on is True else 'Off'}")
-            cpu_temps = ui.label(f'CPU: {fan.cpu_temp}°C / {fan.cpu_temp * 9 / 5 + 32}°F')
+            cpu_temps = ui.label(f'CPU: {fan.cpu_temp}°C / {fan.cpu_temp * 9 / 5 + 32:.2f}°F')
             current_fan = ui.label(f"Fan: {'On' if fan.fan_on is True else 'Off'}")
             # Use ui.timer to periodically check the queue and update the labels
             ui.timer(interval=1, callback=update_labels)

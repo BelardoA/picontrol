@@ -143,7 +143,6 @@ class Config(metaclass=Singleton):
             with open("/proc/device-tree/model", "r") as file:
                 data = file.read()
             import re
-
             if numbers := re.findall(r"[0-9]+", data):
                 return numbers[0]
         except FileNotFoundError:
