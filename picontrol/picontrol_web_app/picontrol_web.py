@@ -27,6 +27,21 @@ passwords = {user["username"]: user["password"]}
 unrestricted_page_routes = {"/login"}
 selected_theme = first_config.site_settings["theme"]
 
+cpu_temp = fan.cpu_temp
+fan_on = fan.fan_on
+fan_interval = fan.interval
+
+
+def update_fan_globals() -> None:
+    """
+    Function to update the global variables for the fan.
+
+    :return: None
+    """
+    global cpu_temp, fan_on, fan_interval
+    if not queue.empty():
+        cpu_temp, fan_on, fan_interval = queue.get()
+
 
 class AuthMiddleware(BaseHTTPMiddleware):
     """
@@ -64,6 +79,25 @@ app.add_static_files("/assets", f"{os.getcwd()}/picontrol_web_app/assets")
 def logout() -> None:
     app.storage.user.update({"authenticated": False})
     ui.open("/login")
+
+
+def dashboard() -> None:
+    def update_line_plot() -> None:
+        update_fan_globals()
+        from datetime import datetime
+        now = datetime.now()
+        y1 = cpu_temp
+        y2 = cpu_temp * 9 / 5 + 32
+        temp_plot.push([now], [[y1], [y2]])
+        temp_label.set_text(f'CPU: {cpu_temp}°C / {cpu_temp * 9 / 5 + 32}°F')
+        fan_label.set_text(f"System Fan: {'On' if fan_on is True else 'Off'}")
+    with ui.card().classes("w-flex"):
+        ui.label("CPU Temperature").classes("text-xl")
+        temp_plot = ui.line_plot(n=2, limit=20, figsize=(8, 5), update_every=1, clear=True).with_legend(['C', 'F'], loc='upper center', ncol=2)
+        temp_label = ui.label(f'CPU: {fan.cpu_temp}°C / {fan.cpu_temp * 9 / 5 + 32}°F')
+        ui.timer(1, update_line_plot, active=True)
+        ui.separator()
+        fan_label = ui.label(f"System Fan: {'On' if queue.get()[2] is True else 'Off'}")
 
 
 def settings_page() -> None:
@@ -127,19 +161,14 @@ def settings_page() -> None:
             .props("label-always")
         )
         with ui.row():
-            cpu_temps = ui.label(f'CPU: {fan.cpu_temp}°C / {fan.cpu_temp * 9 / 5 + 32}°F')
-            current_fan = ui.label(f"Fan: {'On' if fan.fan_on else 'Off'}")
-            # Use ui.timer to periodically check the queue and update the labels
-
             def update_labels():
-                if not queue.empty():
-                    cpu_temp, fan_on, fan_interval = queue.get()
-                    cpu_temps.set_text(f'CPU: {cpu_temp}°C / {cpu_temp * 9 / 5 + 32}°F')
-                    current_fan.set_text(f"Fan: {'On' if fan_on is True else 'Off'}")
-            # Update labels every 1 second
+                update_fan_globals()
+                cpu_temps.set_text(f'CPU: {cpu_temp}°C / {cpu_temp * 9 / 5 + 32}°F')
+                current_fan.set_text(f"Fan: {'On' if fan_on is True else 'Off'}")
+            cpu_temps = ui.label(f'CPU: {fan.cpu_temp}°C / {fan.cpu_temp * 9 / 5 + 32}°F')
+            current_fan = ui.label(f"Fan: {'On' if fan.fan_on is True else 'Off'}")
+            # Use ui.timer to periodically check the queue and update the labels
             ui.timer(interval=1, callback=update_labels)
-
-            # TODO add current temp in F and C
         ui.separator()
         ui.button("Save", on_click=update_fan_settings).classes("mt-4 ml-auto")
     with ui.card().classes("w-full"):
@@ -377,7 +406,7 @@ def main() -> None:
     with ui.tab_panels(tabs, value="Dashboard").classes("w-full"):
         with ui.tab_panel("Dashboard").classes("w-full"):
             with ui.card().props("text-align=center"):
-                ui.label("Content of Dashboard")
+                dashboard()
         with ui.tab_panel("Games"):
             ui.label("Content of Games")
         with ui.tab_panel("NFC"):
