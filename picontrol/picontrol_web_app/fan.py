@@ -96,6 +96,7 @@ class Fan:
         :return: CPU temperature as a float.
         :rtype: float
         """
+        # TODO: remove this when done testing
         import platform
         if not self.pi_version and platform.system() == "Linux":
             import psutil
