@@ -1,7 +1,8 @@
 #!/usr/bin/python3
 """Pydantic data model that will create tables for the buttons configuration options in the web app."""
+from typing import Dict, List, Optional, Tuple
+
 from pydantic import BaseModel
-from typing import Optional, Tuple
 
 
 class ButtonTable(BaseModel):
@@ -12,7 +13,7 @@ class ButtonTable(BaseModel):
     rowVal4: Optional[str] = ""
 
     @classmethod
-    def create_table(cls, **data) -> Tuple[list[dict], list[dict]]:
+    def create_table(cls, **data) -> Tuple[List[Dict], List[Dict]]:
         """
         Create a table for the buttons configuration options in the web app.
 
